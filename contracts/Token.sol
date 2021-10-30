@@ -18,4 +18,8 @@ contract Token is ERC721, Ownable {
 
     }
 
+    function mint( uint8 damage, uint8 magic, uint8 fastingTime) public onlyOwner {
+        
+    }
+
 }
