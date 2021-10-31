@@ -12,14 +12,29 @@ contract Token is ERC721, Ownable {
         uint256 endurance;
     }
 
+    uint256 nextId = 0;
+
     mapping( uint256 => Pet) private _tokenDetails;
 
     constructor(string memory name, string memory symbol) ERC721(name, symbol) {
 
     }
 
-    function mint( uint8 damage, uint8 magic, uint8 fastingTime) public onlyOwner {
-        
+    function mint(uint8 damage, uint8 magic, uint8 endurance) public onlyOwner {
+        _safeMint(msg.sender, nextId);
+        _tokenDetails[nextId] = Pet(damage, magic, block.timestamp, endurance);
+        nextId++;
+    }
+
+    function feed(uint256 tokenId) public {
+        Pet storage pet = _tokenDetails[nextId];
+        require(pet.lastMeal + pet.endurance > block.timestamp);
+        pet.lastMeal = block.timestamp;
+    }
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override {
+        Pet storage pet = _tokenDetails[nextId];
+        require(pet.lastMeal + pet.endurance > block.timestamp);
     }
 
 }
